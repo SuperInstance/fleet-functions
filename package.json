@@ -1,0 +1,25 @@
+{
+  "name": "fleet-functions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The fleet's index of capability — functions discovered by meaning. Worker + Vectorize + D1.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260822.1",
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.0",
+    "wrangler": "^4.126.0"
+  }
+}

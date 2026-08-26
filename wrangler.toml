@@ -1,0 +1,20 @@
+name = "fleet-functions"
+main = "src/worker.ts"
+compatibility_date = "2024-09-01"
+account_id = "REDACTED-CF-ACCOUNT-ID"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "fleet-functions"
+metadata_indexes = [
+  { property = "ns", type = "string" },
+  { property = "deprecated", type = "string" },
+]
+
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fleet-functions-db"
+database_id = "357bb16e-efdf-4d9d-abe7-f52902c7ada4"

@@ -1,0 +1,574 @@
+[
+ {
+  "name": "create_organism",
+  "ns": "cell-cascade",
+  "description": "Creates a new organism with a single totipotent zygote cell. Use when bootstrapping a new differentiation cascade.",
+  "signature": {
+   "params": {
+    "name": {
+     "type": "string",
+     "description": "Unique name for the organism."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/organism",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "list_organisms",
+  "ns": "cell-cascade",
+  "description": "Lists all organisms in the cascade. Use to discover what organisms exist.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/organisms",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "create_cell",
+  "ns": "cell-cascade",
+  "description": "Performs mitosis: creates a child cell inheriting the parent's character sheet, with a new fate slot (role). Optional tier for early differentiation. Use to grow a cell lineage.",
+  "signature": {
+   "params": {
+    "organism": {
+     "type": "string",
+     "description": "Name of the organism the cell belongs to."
+    },
+    "name": {
+     "type": "string",
+     "description": "Unique name for the new cell."
+    },
+    "from_cell": {
+     "type": "string",
+     "description": "Name of the parent cell."
+    },
+    "role": {
+     "type": "string",
+     "description": "Fate slot / role for the new cell."
+    },
+    "tier": {
+     "type": "string",
+     "description": "Optional early differentiation tier."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/cell",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "list_cells",
+  "ns": "cell-cascade",
+  "description": "Inspects all cells of a given organism. Use to see the current cell population.",
+  "signature": {
+   "params": {
+    "organism": {
+     "type": "string",
+     "description": "Name of the organism."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/cells",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "get_cell",
+  "ns": "cell-cascade",
+  "description": "Returns a single cell's full detail: signals, myelin paths, fate history, and children. Use to understand a specific cell's state and lineage.",
+  "signature": {
+   "params": {
+    "id": {
+     "type": "string",
+     "description": "Cell identifier."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/cells/{id}",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "send_signal",
+  "ns": "cell-cascade",
+  "description": "Logs and fires a signal between cells. Sclerotic targets answer deterministically from rule tables (fast/cheap); model tiers think through the model seam (costs logged). Rule-table misses escalate to the germ line and become distillation candidates; myelin counters increment. Use to trigger cell behavior.",
+  "signature": {
+   "params": {
+    "from": {
+     "type": "string",
+     "description": "Source cell name."
+    },
+    "to": {
+     "type": "string",
+     "description": "Target cell name."
+    },
+    "kind": {
+     "type": "string",
+     "description": "Signal kind/type."
+    },
+    "payload": {
+     "type": "object",
+     "description": "Signal payload data."
+    }
+   },
+   "returns": "the endpoint's JSON response",
+   "aliases": [
+    "fire a signal",
+    "message a cell"
+   ]
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/signal",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "organism_health",
+  "ns": "cell-cascade",
+  "description": "Reports organism health: tier balance, totipotent load, zero-cost serve percentage, serve-mode split, cost-tumor watch, sclerosis warnings, and myelin hot paths. Use to diagnose performance or cost issues.",
+  "signature": {
+   "params": {
+    "name": {
+     "type": "string",
+     "description": "Organism name."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/organism/{name}/health",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "list_candidates",
+  "ns": "cell-cascade",
+  "description": "Returns the escalation ledger: every rule-table miss the germ line covered, recorded as a distillation candidate. Use to review what needs distillation.",
+  "signature": {
+   "params": {
+    "name": {
+     "type": "string",
+     "description": "Organism name."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/organism/{name}/candidates",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "resolve_candidate",
+  "ns": "cell-cascade",
+  "description": "Distills a candidate into a deterministic rule appended to the cell's sheet. Use to convert an escalated case into a fast rule.",
+  "signature": {
+   "params": {
+    "id": {
+     "type": "string",
+     "description": "Candidate identifier."
+    },
+    "status": {
+     "type": "string",
+     "description": "Resolution status."
+    },
+    "rule": {
+     "type": "string",
+     "description": "Optional rule to append."
+    },
+    "evidence_ref": {
+     "type": "string",
+     "description": "Reference to evidence."
+    },
+    "gardener_verdict": {
+     "type": "string",
+     "description": "Gardener's verdict."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/candidates/{id}/resolve",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "health",
+  "ns": "cell-cascade",
+  "description": "Liveness check for the cell-cascade differentiation cascade. Use to verify the worker is up.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://cell-cascade.casey-digennaro.workers.dev/health",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "cell-cascade"
+ },
+ {
+  "name": "post_tick",
+  "ns": "scrap-quilt",
+  "description": "Game posts cell writes (max 2/sec). Formulas are computed, changed cells appended to the tape, lap detection runs, and updates broadcast to WS subscribers. Use to advance the game state.",
+  "signature": {
+   "params": {
+    "cells": {
+     "type": "object",
+     "description": "Map of cell names to values, e.g. {\"robot.x\": 29.8}."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/tick",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "get_state",
+  "ns": "scrap-quilt",
+  "description": "Returns a full snapshot of all cells. Use to get the current complete game state.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/state",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "get_layout",
+  "ns": "scrap-quilt",
+  "description": "Returns layout: cell metadata + feeds, and edges (dependency arrows sensor\u2192logic\u2192motor). Use to understand the sheet structure.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "get_history",
+  "ns": "scrap-quilt",
+  "description": "Returns aligned forward-filled tape as time series for specified cells. Use to analyze historical cell values.",
+  "signature": {
+   "params": {
+    "cells": {
+     "type": "string",
+     "description": "Comma-separated cell names."
+    },
+    "limit": {
+     "type": "number",
+     "description": "Maximum number of history points."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/history",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "get_dashboard",
+  "ns": "scrap-quilt",
+  "description": "Returns sparkline shape series for specified cells. Use for quick visual dashboards.",
+  "signature": {
+   "params": {
+    "cells": {
+     "type": "string",
+     "description": "Comma-separated cell names."
+    },
+    "limit": {
+     "type": "number",
+     "description": "Maximum number of points."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/dashboard",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "predict",
+  "ns": "scrap-quilt",
+  "description": "Ghost racers: forward-simulates with the game's exact kinematics, battery sag, encoder accumulation, and lap crossings. Use to predict future state.",
+  "signature": {
+   "params": {
+    "ticks": {
+     "type": "number",
+     "description": "Number of ticks to simulate forward."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/predict",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "chat",
+  "ns": "scrap-quilt",
+  "description": "Spark, the explainer: ask a question about the live Scrapcraft sheet and get an answer that cites live cell ids (robot.motorL.volts...). Pincher-cached \u2014 the same question in a similar state answers instantly.",
+  "signature": {
+   "params": {
+    "question": {
+     "type": "string",
+     "description": "Question to ask Spark."
+    }
+   },
+   "returns": "the endpoint's JSON response",
+   "aliases": [
+    "ask spark",
+    "why is my robot slow",
+    "explain the sheet"
+   ]
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/chat",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "chat_stats",
+  "ns": "scrap-quilt",
+  "description": "Returns Spark cache ledger. Use to see chat cache performance.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/chat/stats",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "flash_log",
+  "ns": "scrap-quilt",
+  "description": "Hardware flash events become part of the sheet. Use to log flash events into the game state.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://scrap-quilt.casey-digennaro.workers.dev/flash-log",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "scrap-quilt"
+ },
+ {
+  "name": "query",
+  "ns": "fleet-twin",
+  "description": "Semantic search over the fleet's embedded corpora; returns ranked chunks with source attribution. Use to find relevant knowledge across the fleet. Ask 'how did the pocket lock last time' class questions of everything the fleet has written. The band's conversation memory: how did the pocket lock last time, what did the crew decide \u2014 ask by meaning.",
+  "signature": {
+   "params": {
+    "text": {
+     "type": "string",
+     "description": "Query text."
+    },
+    "topK": {
+     "type": "number",
+     "description": "Number of top results to return."
+    },
+    "type": {
+     "type": "string",
+     "description": "Optional filter by document type."
+    },
+    "source": {
+     "type": "string",
+     "description": "Optional filter by source."
+    }
+   },
+   "returns": "the endpoint's JSON response",
+   "aliases": [
+    "shared memory",
+    "what does the fleet remember",
+    "pocket lock",
+    "fleet memory search"
+   ]
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://fleet-twin.casey-digennaro.workers.dev/query",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "fleet-twin"
+ },
+ {
+  "name": "ingest",
+  "ns": "fleet-twin",
+  "description": "Bearer-gated; embeds and indexes docs idempotently. Use to add documents to the vector memory.",
+  "signature": {
+   "params": {
+    "docs": {
+     "type": "array",
+     "description": "Array of documents, each with id, text, and metadata."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://fleet-twin.casey-digennaro.workers.dev/ingest",
+   "method": "POST"
+  },
+  "auth_kind": "bearer",
+  "owner": "fleet-twin"
+ },
+ {
+  "name": "stats",
+  "ns": "fleet-twin",
+  "description": "Returns vector count, sources, model, and dimensions. Use to inspect the vector memory.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://fleet-twin.casey-digennaro.workers.dev/stats",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "fleet-twin"
+ },
+ {
+  "name": "health",
+  "ns": "fleet-twin",
+  "description": "Liveness check for fleet-twin, the fleet's vector memory. Use to verify the twin is up.",
+  "signature": {
+   "params": {},
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://fleet-twin.casey-digennaro.workers.dev/health",
+   "method": "GET"
+  },
+  "auth_kind": "none",
+  "owner": "fleet-twin"
+ },
+ {
+  "name": "compile",
+  "ns": "tapscript-worker",
+  "description": "Compiles TapScript (v1 roman numeral or v2 absolute pitch) to a standard MIDI file. Use to convert notation to playable MIDI.",
+  "signature": {
+   "params": {
+    "notation": {
+     "type": "string",
+     "description": "TapScript notation string."
+    },
+    "tempo": {
+     "type": "number",
+     "description": "Optional tempo in BPM."
+    },
+    "title": {
+     "type": "string",
+     "description": "Optional title for the MIDI file."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://tapscript-worker.casey-digennaro.workers.dev/compile",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "tapscript-worker"
+ },
+ {
+  "name": "parse",
+  "ns": "tapscript-worker",
+  "description": "Parses TapScript and returns structured info (validity, notes) without rendering. Use to validate or inspect notation.",
+  "signature": {
+   "params": {
+    "notation": {
+     "type": "string",
+     "description": "TapScript notation string."
+    }
+   },
+   "returns": "the endpoint's JSON response"
+  },
+  "invoke_kind": "http",
+  "invoke_target": {
+   "url": "https://tapscript-worker.casey-digennaro.workers.dev/parse",
+   "method": "POST"
+  },
+  "auth_kind": "none",
+  "owner": "tapscript-worker"
+ }
+]

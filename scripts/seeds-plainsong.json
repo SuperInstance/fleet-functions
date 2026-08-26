@@ -1,0 +1,924 @@
+[
+ {
+  "name": "ensemble_open",
+  "ns": "plainsong",
+  "description": "Open a shared session several agents can write to, or reopen one that exists.  Sets the key, tempo, metre and form every part is written against.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "title": {
+     "type": "string"
+    },
+    "key": {
+     "type": "string"
+    },
+    "tempo": {
+     "type": "number"
+    },
+    "meter": {
+     "type": "string"
+    },
+    "bars": {
+     "type": "integer"
+    },
+    "subdivision": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "session",
+    "title"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_open",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_join",
+  "ns": "plainsong",
+  "description": "Claim one voice of a session. A voice has one owner at a time, so claiming is how  agents avoid choosing the same part. Returns everything needed to start writing.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    },
+    "agent": {
+     "type": "string"
+    },
+    "takeover": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "session",
+    "voice",
+    "agent"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_join",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_leave",
+  "ns": "plainsong",
+  "description": "Release a voice you hold so another agent can take it.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    },
+    "agent": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "session",
+    "voice",
+    "agent"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_leave",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_read",
+  "ns": "plainsong",
+  "description": "Read a session in one call: key, tempo, metre, form, which voices exist and who  holds them, what every voice plays in the bars you are about to write, your own  part, the version to write against, and what has changed recently. Read the band room before writing: the current parts, your version, recent history.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    },
+    "agent": {
+     "type": "string"
+    },
+    "bars": {
+     "type": "string"
+    },
+    "history": {
+     "type": "integer"
+    }
+   },
+   "required": [],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "read the band room",
+    "read the session"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_read",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_write_part",
+  "ns": "plainsong",
+  "description": "Write your voice's part. The notation is parsed and checked against the session  header before anything reaches disk. Pass the base_version you read; if the voice  has moved on the write is refused and you are given the current part to rebase onto. This is the commit: an agent writes its voice into the shared band session, versioned and conflict-checked.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    },
+    "agent": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    },
+    "base_version": {
+     "type": "integer"
+    },
+    "summary": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "session",
+    "voice",
+    "agent",
+    "content",
+    "base_version"
+   ],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "commit my part",
+    "band commit",
+    "write my voice",
+    "commit to the band"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_write_part",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_render",
+  "ns": "plainsong",
+  "description": "Merge the parts and compile the session to MIDI, and optionally audio.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "audio": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "session"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_render",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_log",
+  "ns": "plainsong",
+  "description": "Read the session's change log, oldest first. This is how a joining agent finds out  what has already happened.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "limit": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "session"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_log",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_status",
+  "ns": "plainsong",
+  "description": "The short view of a session: version, voices, who holds what, bar count and whether  the merged score still compiles. Omit the name to list sessions. The band room status board: who holds which voice, at what version.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    }
+   },
+   "required": [],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "band status",
+    "who holds what",
+    "session status"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_status",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "analyze_features",
+  "ns": "plainsong",
+  "description": "Describe a piece as sixteen numbers per bar -- density, register, tension,  syncopation, dynamics and the rest -- so a model can perceive what is written.  Returns the per-bar rows as well as their mean: the pulse-eye retrospective  found the events that matter (a pocket lock was one bar among sixteen) live  at bar resolution, and a consumer that collapses to the mean early loses them. Use when a model needs to hear the piece as numbers: where syncopation and dynamics move.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    },
+    "session": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    },
+    "bars": {
+     "type": "string"
+    },
+    "table": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "path",
+    "content",
+    "session",
+    "voice",
+    "bars"
+   ],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "features per bar",
+    "hear as numbers",
+    "sixteen features"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "analyze_features",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "perception_trace",
+  "ns": "plainsong",
+  "description": "Read a session as a per-bar trace of all sixteen features -- every bar, every  channel, and deliberately no mean. The pulse-eye retrospective found the loop's  summaries averaged away exactly the events that mattered; this is the trace  those summaries collapsed, as one call. Consumers must not collapse it early  either: read bars, not averages, when judging a change. Use when judging a change bar by bar \u2014 swing, pocket, dynamics \u2014 not by the mean.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    },
+    "bars": {
+     "type": "string"
+    },
+    "table": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "session"
+   ],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "bar by bar",
+    "per-bar features",
+    "the trace"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "perception_trace",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "dimension_stats",
+  "ns": "plainsong",
+  "description": "See one custom dimension of a session: a named annotation row (Breath:, Gaze:,  anything a composer can write) as count, mean, std and a per-bar series. The  eye must see custom dimensions, not just velocity. Needs a compiler that  publishes generic annotation rows; on one that does not, this answers with an  error naming the missing capability and nothing else is affected. Use when you want the numbers behind one named row \u2014 where a Breath or dynamics row sits flat, per bar, instead of averaged away.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    },
+    "row": {
+     "type": "string"
+    },
+    "voice": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "session",
+    "row"
+   ],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "dynamics flat",
+    "breath row",
+    "gaze row",
+    "custom dimension",
+    "where is it flat",
+    "velocity flat"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "dimension_stats",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "perception_audit",
+  "ns": "plainsong",
+  "description": "Audit a session's sixteen feature channels for ones that cannot steer. Each  channel gets its variance across bars and a verdict: DEAD (zero variance in  the texture and every voice -- a dial connected to nothing), COUPLED (|r| > 0.9  with another channel -- one steering dimension, not two) or ALIVE. Returns the  correlation pairs and the count of real steering dimensions. Orthogonality of  steering channels is the difference between growing and stalling; this counts  the degrees of freedom a loop actually has. Use when a critic asks whether the melody swings, which channels are dead, or where the dynamics sit flat \u2014 this is the audit that answers 'what can actually steer'.",
+  "signature": {
+   "params": {
+    "session": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "session"
+   ],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "swing audit",
+    "dead channels",
+    "coupled channels",
+    "steering dimensions",
+    "what can steer",
+    "dynamics flat"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "perception_audit",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "apply_directives",
+  "ns": "plainsong",
+  "description": "Apply a bandleader's directive JSON to a piece or an ensemble session and return  the result as data: the directives as they were read, what the arrangement was  before and after, and the sixteen features per bar of each. Use conduct_score  instead when you want the timing report in prose.",
+  "signature": {
+   "params": {
+    "directives": {
+     "type": "object"
+    },
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    },
+    "session": {
+     "type": "string"
+    },
+    "frame": {
+     "type": "string"
+    },
+    "features": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "directives"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "apply_directives",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "notation_reference",
+  "ns": "plainsong",
+  "description": "Read the Plainsong notation reference. Call this before writing notation for the  first time in a session.",
+  "signature": {
+   "params": {},
+   "required": [],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "how to write notation",
+    "notation docs"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "notation_reference",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "probe_host",
+  "ns": "plainsong",
+  "description": "Report what this machine can do: platform, optional libraries, soundfonts, MIDI  ports, audio playback, network. Use it before choosing how to render or connect.",
+  "signature": {
+   "params": {},
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "probe_host",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "list_files",
+  "ns": "plainsong",
+  "description": "List files in the working directory.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    }
+   },
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "list_files",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "read_file",
+  "ns": "plainsong",
+  "description": "Read a text file from the working directory or the project.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "path"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "read_file",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "write_file",
+  "ns": "plainsong",
+  "description": "Write a text file into the working directory, creating parent directories.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "path",
+    "content"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "write_file",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "write_score",
+  "ns": "plainsong",
+  "description": "Write Plainsong notation to a .song file. The notation is parsed first and the  result reports any problems, so use this rather than write_file for music.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "path",
+    "content"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "write_score",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "compile_score",
+  "ns": "plainsong",
+  "description": "Compile notation to MIDI and audio, returning the arrangement summary and any  diagnostics. Pass either a path or inline content.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    },
+    "audio": {
+     "type": "boolean"
+    }
+   },
+   "required": [],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "compile to midi",
+    "render audio"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "compile_score",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "transpose_score",
+  "ns": "plainsong",
+  "description": "Transpose a notation file to another key, writing the result next to it.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    },
+    "key": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "path",
+    "key"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "transpose_score",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "search_library",
+  "ns": "plainsong",
+  "description": "Search the bundled notation library for reference material by title, key or style.",
+  "signature": {
+   "params": {
+    "query": {
+     "type": "string"
+    },
+    "limit": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "query"
+   ],
+   "returns": "tool result as JSON or honest error string",
+   "aliases": [
+    "find reference pieces",
+    "library search"
+   ]
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "search_library",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "read_library",
+  "ns": "plainsong",
+  "description": "Read one file from the bundled notation library, by name or title.",
+  "signature": {
+   "params": {
+    "name": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "name"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "read_library",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "verify_specs",
+  "ns": "plainsong",
+  "description": "Run the project's specs and report what passes and what fails. Use this after  making a change to check whether it worked.",
+  "signature": {
+   "params": {
+    "tag": {
+     "type": "string"
+    }
+   },
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "verify_specs",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "record_decision",
+  "ns": "plainsong",
+  "description": "Append a line to the build journal, recording a decision and why it was made.",
+  "signature": {
+   "params": {
+    "note": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "note"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "record_decision",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "stage_reference",
+  "ns": "plainsong",
+  "description": "Read how to write a [Stage] block: positions, listeners, speech profiles and feel.  Call this before writing arrival-centric timing for the first time in a session.",
+  "signature": {
+   "params": {},
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "stage_reference",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "ensemble_report",
+  "ns": "plainsong",
+  "description": "Report what a listener on the stage actually hears: each voice's distance, speech  time, propagation delay and the moment its player has to act, plus the spread at  the chosen listener and at every other one.",
+  "signature": {
+   "params": {
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    },
+    "frame": {
+     "type": "string"
+    }
+   },
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "ensemble_report",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "speech_profiles",
+  "ns": "plainsong",
+  "description": "List the instrument speech profiles a [Stage] block can name, with how long each  takes to sound and how far into the attack the ear places it.",
+  "signature": {
+   "params": {},
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "speech_profiles",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "directive_reference",
+  "ns": "plainsong",
+  "description": "Read the conductor's directive vocabulary -- the JSON a bandleader sends, which  actions the timing layer acts on, and what the windows and targets mean. Call this  before writing directives for the first time in a session.",
+  "signature": {
+   "params": {},
+   "required": [],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "directive_reference",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ },
+ {
+  "name": "conduct_score",
+  "ns": "plainsong",
+  "description": "Apply a bandleader's directive JSON to a piece and report what it did to the  ensemble's timing: how the arrivals moved together and how far each player's hands  moved to keep them there.",
+  "signature": {
+   "params": {
+    "directives": {
+     "type": "string"
+    },
+    "path": {
+     "type": "string"
+    },
+    "content": {
+     "type": "string"
+    },
+    "frame": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "directives"
+   ],
+   "returns": "tool result as JSON or honest error string"
+  },
+  "invoke_kind": "mcp",
+  "invoke_target": {
+   "transport": "stdio",
+   "command": "plainsong-mcp",
+   "tool": "conduct_score",
+   "note": "also served over loopback HTTP with --http; JSON-RPC tools/call"
+  },
+  "auth_kind": "none",
+  "owner": "plainsong-mcp"
+ }
+]
